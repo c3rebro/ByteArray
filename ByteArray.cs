@@ -24,8 +24,18 @@ namespace ByteArrayHelper
 			
 		}
 		
+		public ByteArray(int length)
+		{
+			Data = new byte[length];
+		}
 		
-		public static byte[] Or(List<byte[]> source, bool isLittleEndian = true)
+		public ByteArray(byte[] _data)
+		{
+			Data = new byte[_data.Length];
+			Data = _data;
+		}
+		
+		public byte[] Or(List<byte[]> source, bool isLittleEndian = true)
 		{
 			
 			ObservableCollection<byte[]> localCopy = new ObservableCollection<byte[]>(source);
@@ -42,7 +52,35 @@ namespace ByteArrayHelper
 			//localCopy.Aggregate((i, j) => i.MainListWords.Length > j.MainListWords.Length ? i : j)
 		}
 		
-
+		public ByteArray Or(byte[] source, bool isLittleEndian = true)
+		{
+			
+			byte[] localCopy = new byte[Data.Length];
+			
+			if(!isLittleEndian) // or-ing from right to left
+			{
+//				for (int i = localCopy.Length; i > 0; i--)
+//				{
+//					if((localCopy.Length - source.Length) < i)
+//					{
+//						Data[i] |= source[i - ];
+//					}
+//				}
+			}
+			else // the other way around
+			{
+				for (int i = 0; i < localCopy.Length; i++)
+				{
+					if(source.Length > i)
+					{
+						Data[i] |= source[i];
+					}
+					else
+						break;
+				}
+			}
+			return this;
+		}
 	}
 	
 	namespace Extensions
@@ -52,25 +90,34 @@ namespace ByteArrayHelper
 		/// </summary>
 		public static class ByteConverter
 		{
-			
-			public static byte[] ConvToLittleEndian(byte[] bigEndian)
+			/// <summary>
+			/// Reverses an Array of Bytes from Little Endian to Big Endian or Vice Versa
+			/// </summary>
+			/// <param name="arrToReverse">The byte[] Array to be reversed</param>
+			/// <returns>The byte[] Array in Reversed Order</returns>
+			public static byte[] Reverse(byte[] arrToReverse)
 			{
 				if (BitConverter.IsLittleEndian)
-					Array.Reverse(bigEndian);
+					Array.Reverse(arrToReverse);
 				
-				return bigEndian;
+				return arrToReverse;
 			}
 			
-			public static byte Reverse(byte x)
+			/// <summary>
+			/// Reverses the Bit Order in a Single Byte
+			/// </summary>
+			/// <param name="byteToPutInReverseOrder">The byte to be reversed</param>
+			/// <returns>The byte in reversed Order</returns>
+			public static byte Reverse(byte byteToPutInReverseOrder)
 			{
-				byte y = 0;
+				byte byteInReversedOrder = 0;
 				for (byte i = 0; i < 8; ++i)
 				{
-					y <<= 1;
-					y |= (byte)(x & 1);
-					x >>= 1;
+					byteInReversedOrder <<= 1;
+					byteInReversedOrder |= (byte)(byteToPutInReverseOrder & 1);
+					byteToPutInReverseOrder >>= 1;
 				}
-				return y;
+				return byteInReversedOrder;
 			}
 			
 			public static int GetByteCount(string hexString)
