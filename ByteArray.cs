@@ -86,7 +86,7 @@ namespace ByteArrayHelper
 	namespace Extensions
 	{
 		/// <summary>
-		/// Description of MyClass.
+		/// Convert byte and byte[] to and from other types
 		/// </summary>
 		public static class ByteConverter
 		{
@@ -120,6 +120,11 @@ namespace ByteArrayHelper
 				return byteInReversedOrder;
 			}
 			
+			/// <summary>
+			/// Gets the Amount of bytes in a string that contains one or more bytes in the format "00" to "FF" each byte
+			/// </summary>
+			/// <param name="hexString">A string containing one or more bytes in the format "00" to "FF" each byte</param>
+			/// <returns>The Amount of Bytes in the string</returns>
 			public static int GetByteCount(string hexString)
 			{
 				int numHexChars = 0;
@@ -139,6 +144,12 @@ namespace ByteArrayHelper
 				return numHexChars / 2; // 2 characters per byte
 			}
 
+			/// <summary>
+			/// Converts a string with hexadecimal chars to a byte array (e.g.: "FF00FF" -> byte[3]{0xFF,0x00,0xFF})
+			/// </summary>
+			/// <param name="hexString">The string to convert</param>
+			/// <param name="discarded">The Number of characters in the string that could not be converted to a byte</param>
+			/// <returns>The Array that contains all converted values. Reliably only if <param name="discarded"/> is returned as 0</returns>
 			public static byte[] GetBytes(string hexString, out int discarded)
 			{
 				discarded = 0;
@@ -173,6 +184,11 @@ namespace ByteArrayHelper
 				return bytes;
 			}
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="bytes"></param>
+			/// <returns></returns>
 			public static string HexToString(byte[] bytes)
 			{
 				string hexString = "";
@@ -183,6 +199,11 @@ namespace ByteArrayHelper
 				return hexString;
 			}
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="bytes"></param>
+			/// <returns></returns>
 			public static string HexToString(byte bytes)
 			{
 				string hexString = "";
@@ -192,6 +213,11 @@ namespace ByteArrayHelper
 				return hexString;
 			}
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="hexString"></param>
+			/// <returns></returns>
 			public static bool IsInHexFormat(string hexString)
 			{
 				bool hexFormat = true;
@@ -207,6 +233,11 @@ namespace ByteArrayHelper
 				return hexFormat;
 			}
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="c"></param>
+			/// <returns></returns>
 			public static bool IsHexDigit(Char c)
 			{
 				int numChar;
@@ -223,9 +254,20 @@ namespace ByteArrayHelper
 
 			private static byte HexToByte(string hex)
 			{
-				if (hex.Length > 2 || hex.Length <= 0)
-					throw new ArgumentException("hex must be 1 or 2 characters in length");
-				byte newByte = byte.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+				byte newByte = 0x00;
+				
+				try
+				{
+					if (!(hex.Length > 2 || hex.Length <= 0))
+					{
+						newByte = byte.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+					}
+				}
+				catch
+				{
+					return 0x00;
+				}
+
 				return newByte;
 			}
 		}
